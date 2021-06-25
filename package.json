@@ -1,0 +1,17 @@
+{
+  "name": "browser-support-budget",
+  "version": "0.0.0",
+  "description": "Compare browser support claims with APIs used by the shipped bundle.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/edilec/browser-support-budget"
+  }
+}
