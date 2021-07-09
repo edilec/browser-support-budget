@@ -5,7 +5,7 @@ export const RULES = Object.freeze({
   'inventory-incomplete': 'warning', 'unsupported-feature': 'error',
   'compatibility-unknown': 'warning', 'polyfill-uncertain': 'warning',
   'dynamic-import-uncertain': 'warning', 'limit-exceeded': 'warning',
-  'no-evidence': 'warning', 'input-unreadable': 'warning'
+  'no-evidence': 'warning', 'input-unreadable': 'warning', 'duplicate-key': 'warning'
 });
 const cmp = (a, b) => a < b ? -1 : a > b ? 1 : 0;
 const id = s => typeof s === 'string' && /^[a-z][a-z0-9.-]{0,79}$/.test(s);

@@ -7,7 +7,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "lint": "node --check src/index.mjs && node --check src/cli.mjs && node --check bin/browser-support-budget.mjs",
+    "lint": "node --check src/index.mjs && node --check src/json-keys.mjs && node --check src/cli.mjs && node --check bin/browser-support-budget.mjs",
     "test": "node --test",
     "check": "npm run lint && npm test"
   },

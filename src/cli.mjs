@@ -2,6 +2,7 @@ import { readFileSync, realpathSync, statSync } from 'node:fs';
 import { resolve, relative, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { evaluateBudget, LIMITS, RULES, TOOL_ID } from './index.mjs';
+import { inspectJsonKeys } from './json-keys.mjs';
 
 const source = fileURLToPath(new URL('../data/compatibility.json', import.meta.url));
 const decode = bytes => new TextDecoder('utf-8', { fatal: true }).decode(bytes);
@@ -33,10 +34,16 @@ export function runCli(args, { stdout = process.stdout, stderr = process.stderr,
     try {
       const bytes = readFileSync(path);
       if (bytes.length > max) return { error: errorReport(role, 'Input byte limit exceeded', 'limit-exceeded') };
-      return { value: JSON.parse(decode(bytes)) };
+      const text = decode(bytes);
+      const value = JSON.parse(text);
+      const problem = inspectJsonKeys(text, LIMITS.depth);
+      if (problem === 'duplicate' && role === '@matrix') return { invalid: true };
+      if (problem) return { error: errorReport(role, problem === 'duplicate' ? 'Input contains duplicate JSON keys' : 'JSON depth limit exceeded', problem === 'duplicate' ? 'duplicate-key' : 'limit-exceeded') };
+      return { value };
     } catch { return { error: errorReport(role, 'Input could not be read, decoded, or parsed') }; }
   };
   const m = read(paths[0], LIMITS.matrixBytes, '@matrix');
+  if (m.invalid) return invalid('Matrix contains duplicate JSON keys');
   const i = read(paths[1], LIMITS.inventoryBytes, '@inventory');
   const c = read(source, 262144, '@dataset');
   const report = m.error || i.error || c.error || evaluateBudget(m.value, i.value, c.value, { now });

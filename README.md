@@ -27,9 +27,9 @@ The pinned `data/compatibility.json` maps a feature and browser to its minimum s
 | `matrix-invalid`, `inventory-invalid`, `dataset-invalid` | warning | Schema or supported shape unusable. |
 | `inventory-incomplete`, `no-evidence` | warning | Coverage is partial or vacuous. |
 | `compatibility-unknown`, `polyfill-uncertain`, `dynamic-import-uncertain` | warning | Support cannot be established. |
-| `limit-exceeded`, `input-unreadable` | warning | Bounded evaluation or input read failed. |
+| `limit-exceeded`, `input-unreadable`, `duplicate-key` | warning | Bounded evaluation or input read failed or JSON keys conflict. |
 
-Warnings make status `incomplete` and exit 2, even if another target is unsupported. Otherwise errors make status `fail` and exit 1; a fully observed and supported inventory makes status `pass` and exit 0. Invalid CLI usage/configuration (unknown option, invalid root, escaped/symlinked input) exits 2 with empty stdout and a short stderr diagnostic. An unreadable, undecodable, oversized or unparseable subject emits an `incomplete` JSON report on stdout, exit 2. Stdout contains only one JSON report; output is deterministic and ordered by source role, pointer, rule and message using code-unit order.
+Warnings make status `incomplete` and exit 2, even if another target is unsupported. Otherwise errors make status `fail` and exit 1; a fully observed and supported inventory makes status `pass` and exit 0. Invalid CLI usage/configuration (unknown option, invalid root, escaped/symlinked input, duplicate matrix keys) exits 2 with empty stdout and a short stderr diagnostic. An unreadable, undecodable, oversized, unparseable or duplicate-key inventory emits an `incomplete` JSON report on stdout, exit 2. JSON keys are compared after escape decoding, so contradictory completeness assertions cannot be hidden by last-value-wins parsing. Stdout contains only one JSON report; output is deterministic and ordered by source role, pointer, rule and message using code-unit order.
 
 ## Limits and non-goals
 

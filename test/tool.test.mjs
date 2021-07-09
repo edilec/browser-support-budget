@@ -102,3 +102,25 @@ test('CLI enforces matrix byte N and N+1 without truncation', () => {
   assert.equal(over.status, 2);
   assert.equal(JSON.parse(over.stdout).findings[0].ruleId, 'limit-exceeded');
 });
+
+test('duplicate inventory completeness keys, including escaped spelling, never pass', () => {
+  const root = mkdtempSync(join(tmpdir(), 'budget-duplicate-'));
+  writeFileSync(join(root, 'matrix.json'), JSON.stringify(matrix));
+  const clean = JSON.stringify(inventory);
+  const run = () => spawnSync(process.execPath, ['bin/browser-support-budget.mjs', '--root', root, '--matrix', 'matrix.json', '--inventory', 'inventory.json'], { cwd: new URL('..', import.meta.url), encoding: 'utf8' });
+  for (const raw of [clean.replace('"complete":true', '"complete":false,"complete":true'), clean.replace('"complete":true', '"com\\u0070lete":false,"complete":true')]) {
+    writeFileSync(join(root, 'inventory.json'), raw);
+    const result = run();
+    assert.equal(result.status, 2);
+    assert.equal(JSON.parse(result.stdout).findings[0].ruleId, 'duplicate-key');
+  }
+});
+
+test('duplicate matrix configuration keys are invalid usage with empty stdout', () => {
+  const root = mkdtempSync(join(tmpdir(), 'budget-matrix-duplicate-'));
+  writeFileSync(join(root, 'matrix.json'), '{"schemaVersion":"0","schemaVersion":"1","browsers":[{"browser":"chrome","version":120}]}');
+  writeFileSync(join(root, 'inventory.json'), JSON.stringify(inventory));
+  const result = spawnSync(process.execPath, ['bin/browser-support-budget.mjs', '--root', root, '--matrix', 'matrix.json', '--inventory', 'inventory.json'], { cwd: new URL('..', import.meta.url), encoding: 'utf8' });
+  assert.equal(result.status, 2);
+  assert.equal(result.stdout, '');
+});
