@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "1",
+  "datasetId": "compat-2026-09-26",
+  "features": {
+    "fetch": { "chrome": 42, "firefox": 39, "safari": 10 },
+    "css.grid": { "chrome": 57, "firefox": 52, "safari": 10 },
+    "navigator.serviceworker": { "chrome": 40, "firefox": 44, "safari": 11 }
+  }
+}
